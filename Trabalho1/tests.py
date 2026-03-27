@@ -6,7 +6,6 @@ def test_structure():
 
     isam = ISAM()
     isam.build_initial_structure()
-
     isam.print_structure()
 
 
@@ -16,9 +15,7 @@ def test_find_leaf():
     isam = ISAM()
     isam.build_initial_structure()
 
-    keys_to_test = [10, 23, 35, 41, 60]
-
-    for key in keys_to_test:
+    for key in [10, 23, 35, 41, 60]:
         leaf, path = isam.find_leaf(key)
 
         print(f"\nChave: {key}")
@@ -35,9 +32,7 @@ def test_insert():
     isam = ISAM()
     isam.build_initial_structure()
 
-    insert_keys = [23, 48, 41, 42]
-
-    for key in insert_keys:
+    for key in [23, 48, 41, 42]:
         print(f"\nInserindo {key}...")
         isam.insert(key)
 
@@ -50,9 +45,7 @@ def test_overflow():
     isam = ISAM()
     isam.build_initial_structure()
 
-    keys = [48, 41, 42, 43, 44, 45]
-
-    for key in keys:
+    for key in [48, 41, 42, 43, 44, 45]:
         print(f"Inserindo {key}...")
         isam.insert(key)
 
@@ -65,20 +58,16 @@ def test_search():
     isam = ISAM()
     isam.build_initial_structure()
 
-    # prepara dados
     for key in [23, 48, 41, 42]:
         isam.insert(key)
 
-    search_keys = [23, 41, 99]
-
-    for key in search_keys:
+    for key in [23, 41, 99]:
         print(f"\nBuscando {key}...")
-        result = isam.search(key)
-        print("Resultado:", result)
+        print("Resultado:", isam.search(key))
 
 
 def test_range_search():
-    print("\n=== TESTE 6: Busca por Intervalo ===")
+    print("\n=== TESTE 6: Intervalo ===")
 
     isam = ISAM()
     isam.build_initial_structure()
@@ -86,11 +75,7 @@ def test_range_search():
     for key in [23, 48, 41, 42]:
         isam.insert(key)
 
-    start, end = 20, 50
-    print(f"\nIntervalo: {start} até {end}")
-
-    result = isam.range_search(start, end)
-    print("Resultado:", result)
+    print("Resultado:", isam.range_search(20, 50))
 
 
 def test_delete():
@@ -102,10 +87,8 @@ def test_delete():
     for key in [23, 48, 41, 42]:
         isam.insert(key)
 
-    delete_keys = [23, 41]
-
-    for key in delete_keys:
-        print(f"\nRemovendo {key}...")
+    for key in [23, 41]:
+        print(f"Removendo {key}")
         isam.delete(key)
 
     isam.print_structure()
@@ -126,6 +109,71 @@ def test_metrics():
     isam.show_metrics()
 
 
+def test_simulacao_experimental():
+    print("\n=== SIMULAÇÃO EXPERIMENTAL (OFICIAL) ===")
+
+    isam = ISAM()
+    isam.build_initial_structure()
+
+
+    print("\n📌 Estrutura inicial:")
+    isam.print_structure()
+
+   
+    print("\n📌 Inserções obrigatórias:")
+    insert_keys = [23, 48, 41, 42]
+
+    for key in insert_keys:
+        print(f"Inserindo {key}...")
+        isam.insert(key)
+
+    print("\n📌 Estrutura após inserções:")
+    isam.print_structure()
+
+    
+    print("\n📌 Remoções:")
+    remove_keys = [23, 41]
+
+    for key in remove_keys:
+        print(f"Removendo {key}...")
+        isam.delete(key)
+
+    print("\n📌 Estrutura após remoções:")
+    isam.print_structure()
+
+  
+    print("\n📌 Busca por igualdade:")
+
+    key = 42
+    leaf, path = isam.find_leaf(key)
+
+    print(f"\nBuscando {key}...")
+    print("Caminho percorrido:")
+    for node in path:
+        print(node.keys)
+
+    result = isam.search(key)
+    print("Encontrado:", result)
+
+   
+    print("\n📌 Busca por intervalo:")
+
+    start, end = 20, 50
+    leaf, path = isam.find_leaf(start)
+
+    print(f"\nIntervalo {start} até {end}")
+    print("Caminho inicial:")
+    for node in path:
+        print(node.keys)
+
+    result = isam.range_search(start, end)
+    print("Resultado:", result)
+
+  
+    print("\n📌 Métricas:")
+    isam.show_metrics()
+
+
 def run_all_tests():
     print("\n=========== INICIANDO TESTES ISAM ===========")
 
@@ -138,8 +186,7 @@ def run_all_tests():
     test_delete()
     test_metrics()
 
-    print("\n=========== FIM DOS TESTES ===========\n")
+    
+    test_simulacao_experimental()
 
-
-if __name__ == "__main__":
-    run_all_tests()
+    print("\n=========== FIM DOS TESTES ===========")
