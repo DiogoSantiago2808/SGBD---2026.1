@@ -1,42 +1,82 @@
-from tests import run_all_tests
 from isam import ISAM
+from tests import run_all_tests
+
+
+def menu():
+    print("\n========= MENU ISAM =========")
+    print("1 - Inserir chave")
+    print("2 - Remover chave")
+    print("3 - Buscar chave")
+    print("4 - Buscar intervalo")
+    print("5 - Mostrar árvore")
+    print("6 - Mostrar métricas")
+    print("7 - Rodar testes completos")
+    print("0 - Sair")
+    print("=============================")
 
 
 def main():
     isam = ISAM()
-
-    
     isam.build_initial_structure()
 
-    
-    isam.insert(23)
-    isam.insert(48)
-    isam.insert(41)
-    isam.insert(42)
-
-   
-    isam.delete(23)
-
-    
-    print("Busca 41:", isam.search(41))
-    print("Intervalo 20-50:", isam.range_search(20, 50))
-
-   
+    print("\nEstrutura inicial carregada!")
     isam.print_structure()
-    isam.show_metrics()
+
+    while True:
+        menu()
+        opcao = input("Escolha uma opção: ")
+
+        if opcao == "1":
+            try:
+                key = int(input("Digite a chave: "))
+                isam.insert(key)
+                print(f"Chave {key} inserida.")
+                isam.print_structure()
+            except:
+                print("Entrada inválida.")
+
+        elif opcao == "2":
+            try:
+                key = int(input("Digite a chave: "))
+                isam.delete(key)
+                print(f"Chave {key} removida.")
+                isam.print_structure()
+            except:
+                print("Entrada inválida.")
+
+        elif opcao == "3":
+            try:
+                key = int(input("Digite a chave: "))
+                result = isam.search(key)
+                print("Resultado:", result)
+            except:
+                print("Entrada inválida.")
+
+        elif opcao == "4":
+            try:
+                start = int(input("Início: "))
+                end = int(input("Fim: "))
+                result = isam.range_search(start, end)
+                print("Resultado:", result)
+            except:
+                print("Entrada inválida.")
+
+        elif opcao == "5":
+            isam.print_structure()
+
+        elif opcao == "6":
+            isam.show_metrics()
+
+        elif opcao == "7":
+            run_all_tests()
+
+        elif opcao == "0":
+            print("Encerrando...")
+            break
+
+        else:
+            print("Opção inválida!")
 
 
 if __name__ == "__main__":
-
-    print("\nEscolha o modo:")
-    print("1 - Rodar TODOS os testes")
-    print("2 - Rodar execução simples")
-
-    opcao = input("Digite 1 ou 2: ")
-
-    if opcao == "1":
-        run_all_tests()
-    elif opcao == "2":
-        main()
-    else:
-        print("Opção inválida")
+    main()
