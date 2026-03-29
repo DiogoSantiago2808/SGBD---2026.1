@@ -7,6 +7,7 @@ class ISAM:
     def __init__(self):
         self.root = None
         self.metrics = []
+        self.removidos_count = 0
 
     #Estrutura fixa
     def build_initial_structure(self):
@@ -74,55 +75,87 @@ class ISAM:
 
     def delete(self, key):
         leaf, _ = self.find_leaf(key)
-        leaf.remove(key)
+        if leaf.remove(key):
+            self.removidos_count += 1
 
 
     def search(self, key):
         leaf, path = self.find_leaf(key)
         found = leaf.search(key)
-
-        self.calculate_cost(path)
+        
+        # Na busca simples, acessamos a folha (+1) 
+        # e percorremos os overflows até achar ou acabar a lista
+        extra_cost = 1
+        current_ov = leaf.overflow
+        while current_ov:
+            extra_cost += 1
+            if key in current_ov.records:
+                break
+            current_ov = current_ov.next_overflow
+            
+        self.calculate_cost(path, extra=extra_cost)
         return found
 
     def range_search(self, start, end):
         leaf, path = self.find_leaf(start)
-        results = self.range_scan(leaf, start, end)
+        results, scan_cost = self.range_scan(leaf, start, end)
 
-        self.calculate_cost(path)
+        self.calculate_cost(path, extra=scan_cost)
         return results
 
     def range_scan(self, leaf, start, end):
         results = []
+        scan_cost = 0
         current_leaf = leaf
 
         while current_leaf:
-        
+            scan_cost += 1
+            
             for key in current_leaf.records:
                 if start <= key <= end:
                     results.append(key)
 
-            
             overflow = current_leaf.overflow
             while overflow:
+                scan_cost += 1
                 for key in overflow.records:
                     if start <= key <= end:
                         results.append(key)
                 overflow = overflow.next_overflow
 
-            
             if current_leaf.records and current_leaf.records[0] > end:
                 break
 
             current_leaf = current_leaf.next_leaf
 
-        return sorted(results)
+        return sorted(results), scan_cost
 
-    def calculate_cost(self, path):
-        cost = len(path)
+    def calculate_cost(self, path, extra=0):
+        cost = len(path) + extra
         self.metrics.append(cost)
 
     def show_metrics(self):
-        print("Custos:", self.metrics)
+        paginas_primarias = 6
+        total_overflow = 0
+        folhas = self.root.children[0].children + self.root.children[1].children
+
+        for leaf in folhas:
+            current_ov = leaf.overflow
+            while current_ov:
+                total_overflow += 1
+                current_ov = current_ov.next_overflow
+        tamanho_medio = total_overflow / paginas_primarias
+
+        print(f"1. Quantidade de páginas folha primárias: {paginas_primarias}")
+        print(f"2. Quantidade de páginas de overflow: {total_overflow}")
+        print(f"3. Tamanho médio das cadeias de overflow: {tamanho_medio:.2f}")
+        print(f"4. Quantidade de registros removidos: {self.removidos_count}")
+
+        if self.metrics:
+            custo_medio = sum(self.metrics) / len(self.metrics)
+            print(f"5. Custo médio das buscas: {custo_medio:.2f} nós/páginas")
+        else:
+            print("5. Custo médio das buscas: Nenhuma busca realizada ainda.")
 
     def print_structure(self):
         print("\n======= ÁRVORE ISAM =======")
