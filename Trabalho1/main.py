@@ -1,5 +1,6 @@
 from isam import ISAM
 from tests import run_all_tests
+from tests import test_simulacao_experimental
 
 
 def menu():
@@ -11,6 +12,7 @@ def menu():
     print("5 - Mostrar árvore")
     print("6 - Mostrar métricas")
     print("7 - Rodar testes completos")
+    print("8 - Rodar simulação experimental")
     print("0 - Sair")
     print("=============================")
 
@@ -69,6 +71,9 @@ def main():
 
         elif opcao == "7":
             run_all_tests()
+
+        elif opcao == "8":
+            test_simulacao_experimental()
 
         elif opcao == "0":
             print("Encerrando...")
